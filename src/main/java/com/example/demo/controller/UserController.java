@@ -56,8 +56,15 @@ public class UserController {
     }
 
     @GetMapping("/searchUsers")
-    public List<UserEntity> getUserByStatus(@RequestParam Status status) {
-        return userService.getUserByStatus(status);
+    public ResponseEntity<List<UserEntity>> getUserByStatus(@RequestParam String status) {
+        try {
+            Status validStatus = Status.valueOf(status.toUpperCase());
+            List<UserEntity> users = userService.getUserByStatus(validStatus);
+            return ResponseEntity.ok(users);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+                    .body(null);
+        }
     }
 
 }
